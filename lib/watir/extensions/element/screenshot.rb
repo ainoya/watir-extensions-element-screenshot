@@ -1,5 +1,5 @@
 require "watir/extensions/element/screenshot/version"
-require 'chunky_png'
+require 'Rmagick'
 
 module Watir
   class Element
@@ -7,9 +7,9 @@ module Watir
       file = Tempfile.new('sc')
       begin
         browser.screenshot.save(file)
-        image = ChunkyPNG::Image.from_file(file)
-        image.crop!(wd.location.x + 1, wd.location.y + 1, wd.size.width, wd.size.height)
-        image.save(dest)
+        image = Magick::Image.read(file.path).first
+        output = image.crop(wd.location.x + 1, wd.location.y + 1, wd.size.width, wd.size.height)
+        output.write(dest)
       ensure 
         file.unlink 
       end
